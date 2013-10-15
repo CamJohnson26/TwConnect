@@ -1,4 +1,5 @@
 import tweepy, urllib2
+from bottle import get, post, route, run, template, request
 
 # == OAuth Authentication ==
 #
@@ -26,6 +27,7 @@ api = tweepy.API(auth)
 list = api.user_timeline("@mostlyharmlessz");
 
 url = "http://classify.knilab.com/classify/text/linear/";
+htmlfile = "<html><body>";
 
 for i in list:
 	values = "input=" + i.text;
@@ -37,7 +39,34 @@ for i in list:
 	the_page = response.read()
 
 	print(the_page[0:30], i.text);
+	htmlfile = htmlfile + "<p>" + the_page +"</p>" + "<p>" + i.text + "</p>";
 	response.close()
+
+htmlfile = htmlfile + "</body></html>"
+@route('/hello')
+def hello():
+    return htmlfile
+    
+@get('/inputusers') # or @route('/login')
+def login():
+    return '''
+        <form action="/inputusers" method="post">
+            User1: <input name="user1" type="text" />
+            User2: <input name="user2" type="text" />
+            <input value="Users" type="submit" />
+        </form>
+    '''
+
+@post('/inputusers') # or @route('/login', method='POST')
+def do_login():
+    user1 = request.forms.get('user1')
+    user2 = request.forms.get('user2')
+    
+    rs = "<p>" + user1 + "    " + user2 + "</p";
+    return rs
+
+print(htmlfile)
+run(host='localhost', port=8080, debug=True)
 
 # If the application settings are set for "Read and Write" then
 # this line should tweet out the message to your account's 
