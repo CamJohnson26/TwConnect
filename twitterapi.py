@@ -22,37 +22,33 @@ def getAPIInfo(username):
 	#userfollowers = api.followers(username);
 	usertweets = api.home_timeline
 	
-	print("\n\nTweets:::::::");
-	for i in userlist:
-		print(i.text);
-	
 	# All from https://dev.twitter.com/docs/platform-objects/users
-	print("\n\nUser Data:::::::");
-	print(user.statuses_count);
-	print(user.created_at);
-	print(user.description);
-	print(user.favourites_count);
-	print(user.following);
-	print(user.friends_count);
-	print(user.geo_enabled);
-	print(user.lang);
-	print(user.listed_count);
-	print(user.location);
-	print(user.name);
-	print(user.profile_background_color);
-	print(user.profile_background_image_url);
-	print(user.profile_image_url);
-	print(user.protected);
-	print(user.screen_name);
-	print(user.status);
-	print(user.time_zone);
-	print(user.url);
-	print(user.utc_offset);
 	
-	# Download all statuses
-	tweepy.Cursor(api.user_timeline, id=username);
+	rv = [];
 	
-	for status in tweepy.Cursor(api.user_timeline).limit(200):
-		process_status(status)
-	
-	return userlist;
+	rv.append("<h1>" + username + "</h1>");
+	rv.append("Total Tweets: " + str(user.statuses_count));
+	rv.append("Profile Creation Date: " + str(user.created_at));
+	rv.append("Description: " + str(user.description));
+	rv.append("Favorites: " + str(user.favourites_count));
+	rv.append("Following? " + str(user.following));
+	rv.append("Friends: " + str(user.friends_count));
+	rv.append("Geotagging Enabled? " + str(user.geo_enabled));
+	rv.append("Language: " + str(user.lang));
+	rv.append("Listed Count: " + str(user.listed_count));
+	rv.append("Location: " + str(user.location));
+	rv.append("User Name: " + str(user.name));
+	rv.append("Profile Background Color: " +  str(user.profile_background_color));
+	rv.append("Profile Background Image URL: " + "<img src=" + str(user.profile_background_image_url) + " />");
+	rv.append("Profile Image URL: " + "<img src=" + str(user.profile_image_url) + " />");
+	rv.append("Protected? " + str(user.protected));
+	rv.append("Screen Name: " + str(user.screen_name));
+	rv.append("Status: " + str(user.status));
+	rv.append("Time Zone: " + str(user.time_zone));
+	rv.append("User URL: " + str(user.url));
+	rv.append("UTC Offset: " + str(user.utc_offset));
+		
+	for status in tweepy.Cursor(api.user_timeline, screen_name=username).items(100):
+		rv.append(status.text);
+		
+	return rv;
