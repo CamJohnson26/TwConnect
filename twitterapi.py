@@ -39,8 +39,8 @@ def getAPIInfo(username):
 	rv.append("Location: " + str(user.location));
 	rv.append("User Name: " + str(user.name));
 	rv.append("Profile Background Color: " +  str(user.profile_background_color));
-	rv.append("Profile Background Image URL: " + "<img src=" + str(user.profile_background_image_url) + " />");
-	rv.append("Profile Image URL: " + "<img src=" + str(user.profile_image_url) + " />");
+	rv.append("Profile Background Image URL: " + "<img width=\"100\" src=" + str(user.profile_background_image_url) + " />");
+	rv.append("Profile Image URL: " + "<img width=\"100\" src=" + str(user.profile_image_url) + " />");
 	rv.append("Protected? " + str(user.protected));
 	rv.append("Screen Name: " + str(user.screen_name));
 	rv.append("Status: " + str(user.status));
