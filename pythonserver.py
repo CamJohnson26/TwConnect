@@ -6,15 +6,17 @@ import WebpageFormatter
 def index():
     return '''
         <form action="/userinput" method="post">
-            Twitter Handle: <input name="twittername" type="text" />
+            User1 Twitter Handle: <input name="user1twittername" type="text" />
+            User2 Twitter Handle: <input name="user2twittername" type="text" />
             <input value="Submit" type="submit" />
         </form>
     '''
 
 @post('/userinput')
 def index():
-	twitterinfo = twitterapi.getAPIInfo(request.forms.get('twittername'));
-	return WebpageFormatter.getFormattedWebpage(twitterinfo);
+	user1twitterinfo = twitterapi.getAPIInfo(request.forms.get('user1twittername'));
+	user2twitterinfo = twitterapi.getAPIInfo(request.forms.get('user2twittername'));
+	return WebpageFormatter.getFormattedWebpage(user1twitterinfo, user2twitterinfo);
 	
 @route('/html/:path#.+#', name='html')
 def static(path):

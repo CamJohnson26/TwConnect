@@ -91,7 +91,7 @@ p
 	background-color:#fafafa;
 	width:250px;
 	color:black;
-	height:250px;
+	min-height:250px;
 	float:right;
 	margin-left:5px;
 	border-radius:6px;

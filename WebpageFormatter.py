@@ -2,23 +2,33 @@
 # Takes as input the results of calling twitterapi.getAPIInfo
 # Returns a formatted webpage containing the information
 
-def getFormattedWebpage(input):
+def getFormattedWebpage(input1, input2):
 	fileHandle = open('html/template.html','r');
 	str1 = fileHandle.read();
 	fileHandle.close();
 	
-	index = str1.find("{{{statuses}}}", 0, len(str1));
+	status1index = str1.find("{{{statuses 1}}}", 0, len(str1));
+	status2index = str1.find("{{{statuses 2}}}", 0, len(str1));
 	
-	webpagestart = str1;
-	webpageend = "";
+	webpagestart1 = str1;
+	webpageend1 = "";
 	
-	if index != -1:
-		webpagestart = str1[0:index];
-		webpageend = str1[index:len(str1)];
+	if status1index != -1:
+		webpagestart1 = str1[0:status1index];
+		webpageend1 = str1[status1index:status2index];
+		
+	webpageend2 = "";
 	
-	statuses = "";
-	for i, v in enumerate(input):
-		statuses = statuses + "<p>" + v + "</p>";
+	if status2index != -1:
+		webpageend2 = str1[status2index:len(str1)];
 	
-	webpage = webpagestart + statuses + webpageend;
+	statuses1 = "";
+	for i, v in enumerate(input1):
+		statuses1 = statuses1 + "<p>" + v + "</p>";
+		
+	statuses2 = "";
+	for i, v in enumerate(input2):
+		statuses2 = statuses2 + "<p>" + v + "</p>";
+	
+	webpage = webpagestart1 + statuses1 + webpageend1 + statuses2 + webpageend2;
 	return webpage;
