@@ -21,5 +21,5 @@ def index():
 @route('/html/:path#.+#', name='html')
 def static(path):
     return static_file(path, root='html')
-
+    
 run(host='localhost', port=8080, debug=True)

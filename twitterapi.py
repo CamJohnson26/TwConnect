@@ -2,6 +2,7 @@
 # with those handles
 
 import tweepy, urllib2
+import analyze_category
 
 def getAPIInfo(username):
 	
@@ -49,6 +50,7 @@ def getAPIInfo(username):
 	rv.append("UTC Offset: " + str(user.utc_offset));
 		
 	for status in tweepy.Cursor(api.user_timeline, screen_name=username).items(100):
-		rv.append(status.text);
+		cat = analyze_category.category(status.text.encode("utf8"));
+		rv.append(status.text + "\t<i><b>" + cat + "</b></i>");
 		
 	return rv;
