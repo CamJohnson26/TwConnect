@@ -22,13 +22,5 @@ def getFormattedWebpage(input1, input2):
 	if status2index != -1:
 		webpageend2 = str1[status2index:len(str1)];
 	
-	statuses1 = "";
-	for i, v in enumerate(input1):
-		statuses1 = statuses1 + "<p>" + v + "</p>";
-		
-	statuses2 = "";
-	for i, v in enumerate(input2):
-		statuses2 = statuses2 + "<p>" + v + "</p>";
-	
-	webpage = webpagestart1 + statuses1 + webpageend1 + statuses2 + webpageend2;
+	webpage = webpagestart1 + input1 + webpageend1 + input2 + webpageend2;
 	return webpage;

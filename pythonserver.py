@@ -1,4 +1,5 @@
 from bottle import route, run, get, post, request, static_file
+from WordCount.wordfrequencies import count_words, compare_freqs
 import twitterapi
 import WebpageFormatter
 
@@ -16,6 +17,11 @@ def index():
 def index():
 	user1twitterinfo = twitterapi.getAPIInfo(request.forms.get('user1twittername'));
 	user2twitterinfo = twitterapi.getAPIInfo(request.forms.get('user2twittername'));
+	user1statuses = twitterapi.getStatuses(request.forms.get('user1twittername'));
+	user2statuses = twitterapi.getStatuses(request.forms.get('user2twittername'));
+
+	compare_freqs(count_words(user1statuses.upper()), count_words(user2statuses.upper()))
+	
 	return WebpageFormatter.getFormattedWebpage(user1twitterinfo, user2twitterinfo);
 	
 @route('/html/:path#.+#', name='html')
