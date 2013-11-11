@@ -2,7 +2,7 @@
 # with those handles
 
 import tweepy, urllib2, os
-import analyze_category
+import alchemy_analyze
 
 def getAPIInfo(username):
 	
@@ -28,26 +28,26 @@ def getAPIInfo(username):
 	rv = "";
 	
 	rv = rv + unicode("<h1>" + username + "</h1>"+ "\n");
-	rv = rv + unicode("Total Tweets: " + str(user.statuses_count) + "\n");
-	rv = rv + unicode("Profile Creation Date: " + str(user.created_at) + "\n");
-	rv = rv + unicode("Description: " + str(user.description) + "\n");
-	rv = rv + unicode("Favorites: " + str(user.favourites_count) + "\n");
-	rv = rv + unicode("Following? " + str(user.following) + "\n");
-	rv = rv + unicode("Friends: " + str(user.friends_count) + "\n");
-	rv = rv + unicode("Geotagging Enabled? " + str(user.geo_enabled)+ "\n");
-	rv = rv + unicode("Language: " + str(user.lang)+ "\n");
-	rv = rv + unicode("Listed Count: " + str(user.listed_count)+ "\n");
-	rv = rv + unicode("Location: " + str(user.location)+ "\n");
+	rv = rv + unicode("Total Tweets: " + unicode(user.statuses_count) + "\n");
+	rv = rv + unicode("Profile Creation Date: " + unicode(user.created_at) + "\n");
+	rv = rv + unicode("Description: " + unicode(user.description) + "\n");
+	rv = rv + unicode("Favorites: " + unicode(user.favourites_count) + "\n");
+	rv = rv + unicode("Following? " + unicode(user.following) + "\n");
+	rv = rv + unicode("Friends: " + unicode(user.friends_count) + "\n");
+	rv = rv + unicode("Geotagging Enabled? " + unicode(user.geo_enabled)+ "\n");
+	rv = rv + unicode("Language: " + unicode(user.lang)+ "\n");
+	rv = rv + unicode("Listed Count: " + unicode(user.listed_count)+ "\n");
+	rv = rv + unicode("Location: " + unicode(user.location)+ "\n");
 	rv = rv + unicode(u"User Name: " + unicode(user.name)+ "\n");
-	rv = rv + unicode("Profile Background Color: " +  str(user.profile_background_color)+ "\n");
-	rv = rv + unicode("Profile Background Image URL: " + "<img width=\"100\" src=" + str(user.profile_background_image_url) + " />"+ "\n");
-	rv = rv + unicode("Profile Image URL: " + "<img width=\"100\" src=" + str(user.profile_image_url) + " />"+ "\n");
-	rv = rv + unicode("Protected? " + str(user.protected)+ "\n");
-	rv = rv + unicode("Screen Name: " + str(user.screen_name)+ "\n");
-	rv = rv + unicode("Status: " + str(user.status)+ "\n");
-	rv = rv + unicode("Time Zone: " + str(user.time_zone)+ "\n");
-	rv = rv + unicode("User URL: " + str(user.url)+ "\n");
-	rv = rv + unicode("UTC Offset: " + str(user.utc_offset)+ "\n");
+	rv = rv + unicode("Profile Background Color: " +  unicode(user.profile_background_color)+ "\n");
+	rv = rv + unicode("Profile Background Image URL: " + "<img width=\"100\" src=" + unicode(user.profile_background_image_url) + " />"+ "\n");
+	rv = rv + unicode("Profile Image URL: " + "<img width=\"100\" src=" + unicode(user.profile_image_url) + " />"+ "\n");
+	rv = rv + unicode("Protected? " + unicode(user.protected)+ "\n");
+	rv = rv + unicode("Screen Name: " + unicode(user.screen_name)+ "\n");
+	rv = rv + unicode("Status: " + unicode(user.status)+ "\n");
+	rv = rv + unicode("Time Zone: " + unicode(user.time_zone)+ "\n");
+	rv = rv + unicode("User URL: " + unicode(user.url)+ "\n");
+	rv = rv + unicode("UTC Offset: " + unicode(user.utc_offset)+ "\n");
 		
 	return rv;
 
@@ -72,5 +72,6 @@ def getStatuses(username):
 	statuses = "";
 	for status in tweepy.Cursor(api.user_timeline, screen_name=username).items(1000):
 		statuses = statuses + status.text;
-		
+
+	print(alchemy_analyze.extract_entities(statuses.encode("utf8")));		
 	return statuses;

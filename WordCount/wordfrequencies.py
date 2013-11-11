@@ -1,8 +1,13 @@
 from collections import Counter
+import nltk, string
 from nltk.tokenize import word_tokenize
+import datetime
 
 ## Read the input text and break it into words
 def count_words(n):
+	remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+	words = [n.translate(remove_punctuation_map)]
+	
 	words = word_tokenize(n)
 	freq = Counter(words)
 	
@@ -58,9 +63,7 @@ def compare_freqs(m,n):
 		if key in n:
 			truncm = float(m[key]);
 			truncn = float(n[key]);
-			
-			print(truncm);
-			
+						
 			diff = abs(truncm - truncn);
 			freq = (truncm + truncn);
 			
@@ -74,11 +77,41 @@ def compare_freqs(m,n):
 	
 	differences = sorted(differences);
 	freqs = sorted(freqs);
-	print(differences);
-	print(freqs);
-			
+	#print(differences);
+	#print(freqs);
+	
 	sortedd = [];
 	for w in sorted(finallist, key=finallist.get, reverse=True):
 		sortedd.append({w : finallist[w]});
 	for i in sortedd:
 		print(i)
+	
+	## Turn the text into a javascript file
+	f = open('d3-cloud/examples/simple.html','rw');
+	htmlpage = f.read();
+	
+	wordlisted = "[";
+	countlisted = "";
+	for i in finallist:
+		wordlisted = wordlisted + "\"" + i + "\", ";
+		countlisted = countlisted + "\"" + '%.5f' % finallist[i]  + "\", ";
+	
+	wllist = len(wordlisted);
+	if wllist > 2:
+		wordlisted = wordlisted[0:wllist - 2];
+		countlisted = countlisted[0:len(countlisted) - 2];		
+	wordlisted += "]";
+	
+	## Write to the javascript file
+	countstart = htmlpage.find('{{{WORDS}}}');
+	wordstart = htmlpage.find('{{{COUNTS}}}');
+	
+	htmlpage2 = htmlpage[0:wordstart] + countlisted + htmlpage[wordstart + 12:countstart] + wordlisted + htmlpage[countstart + 11:len(htmlpage)];
+	f.close();
+	
+	fname = 'd3-cloud/examples/' + str(datetime.date) + str(datetime.time) + '.html';
+	f = open(fname,'w');
+
+	f.truncate();
+	f.write(htmlpage2);
+	f.close();
