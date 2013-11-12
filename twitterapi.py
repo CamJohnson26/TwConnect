@@ -70,8 +70,11 @@ def getStatuses(username):
 	# All from https://dev.twitter.com/docs/platform-objects/users
 	
 	statuses = "";
-	for status in tweepy.Cursor(api.user_timeline, screen_name=username).items(1000):
+	counter = 0;
+	for status in tweepy.Cursor(api.user_timeline, screen_name=username).items(100):
 		statuses = statuses + status.text;
-
-	print(alchemy_analyze.extract_entities(statuses.encode("utf8")));		
+		counter = counter + 1;
+		if counter == 10:
+			print(alchemy_analyze.extract_entities(statuses.encode("utf8")));
+	
 	return statuses;

@@ -9,6 +9,8 @@ def count_words(n):
 	words = [n.translate(remove_punctuation_map)]
 	
 	words = word_tokenize(n)
+	print(words);
+	
 	freq = Counter(words)
 	
 	length = float(len(freq));
@@ -83,8 +85,6 @@ def compare_freqs(m,n):
 	sortedd = [];
 	for w in sorted(finallist, key=finallist.get, reverse=True):
 		sortedd.append({w : finallist[w]});
-	for i in sortedd:
-		print(i)
 	
 	## Turn the text into a javascript file
 	f = open('d3-cloud/examples/simple.html','rw');
