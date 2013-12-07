@@ -2,17 +2,45 @@ from collections import Counter
 import nltk, string
 from nltk.tokenize import word_tokenize
 import datetime
+from operator import itemgetter
 
 ## Read the input text and break it into words
-def count_words(n):
+def count_words_array(n):
 	remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
-	words = [n.translate(remove_punctuation_map)]
+
+	n[:] = [i.translate(remove_punctuation_map) for i in n];
+	n[:] = [word_tokenize(i) for i in n];
+
+	return count_words(n);
+
+def count_words_string(n):
+	remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+	words = n.translate(remove_punctuation_map)
+	words = word_tokenize(words)
+	return count_words([words]);
 	
-	words = word_tokenize(n)
-	print(words);
+def count_words(n):
+	words = n
+	tweetindex = 0;
+	keywordtweetindices = {};
+	freq = {};
 	
-	freq = Counter(words)
-	
+	for i in words:
+		c = Counter(i)
+		for j in c:
+			tempn = []
+			try:
+				tempn = keywordtweetindices[j];
+			except KeyError:
+				tempn = [];
+			tempn.append(tweetindex);
+			keywordtweetindices[j] = tempn;
+			try:
+				freq[j] += c[j];
+			except KeyError:
+				freq[j] = c[j];
+		tweetindex += 1;
+					
 	length = float(len(freq));
 	for key in freq:
 		freq[key] = '%.10f' % float(freq[key] / length);
@@ -46,17 +74,14 @@ def count_words(n):
 	for key in blacklist:
 		if key in freq:
 			del freq[key]
-		
 	
 	## Sort our results by frequency
 	sortedd = {};
 	for w in sorted(freq, key=freq.get, reverse=True):
 		sortedd[w] = freq[w];
+	return {"frequencies" : sortedd, "tweetindices" : keywordtweetindices};
 	
-	return sortedd;
-	
-def compare_freqs(m,n):
-	
+def compare_freqs(m,n):	
 	differences = [];
 	freqs = [];
 	
@@ -65,7 +90,7 @@ def compare_freqs(m,n):
 		if key in n:
 			truncm = float(m[key]);
 			truncn = float(n[key]);
-						
+			
 			diff = abs(truncm - truncn);
 			freq = (truncm + truncn);
 			
@@ -77,41 +102,36 @@ def compare_freqs(m,n):
 			except ZeroDivisionError:
 				finallist[key] = float(0);
 	
-	differences = sorted(differences);
-	freqs = sorted(freqs);
-	#print(differences);
-	#print(freqs);
+	returnlist = [];
+	for key in finallist:
+		returnlist.append([key, finallist[key], float(m[key]), float(n[key])]);
 	
-	sortedd = [];
-	for w in sorted(finallist, key=finallist.get, reverse=True):
-		sortedd.append({w : finallist[w]});
+	# Sort and normalize the return values
+	returnlist = sorted(returnlist, key=itemgetter(1));
+	for i in returnlist:
+		try:
+			i[1] = i[1] / returnlist[len(returnlist) - 1][1];
+		except ZeroDivisionError:
+			i[1] = 0;
 	
-	## Turn the text into a javascript file
-	f = open('d3-cloud/examples/simple.html','rw');
-	htmlpage = f.read();
+	# Return the user 1 and user 2 percentages
+	returnlist = sorted(returnlist, key=itemgetter(2));
+	for i in returnlist:
+		try:
+			i[2] = i[2] / returnlist[len(returnlist) - 1][2];
+		except ZeroDivisionError:
+			i[2] = 0;
+	returnlist = sorted(returnlist, key=itemgetter(3));
+	for i in returnlist:
+		try:
+			i[3] = i[3] / returnlist[len(returnlist) - 1][3];
+		except ZeroDivisionError:
+			i[3] = 0;
+	return returnlist;
 	
-	wordlisted = "[";
-	countlisted = "";
-	for i in finallist:
-		wordlisted = wordlisted + "\"" + i + "\", ";
-		countlisted = countlisted + "\"" + '%.5f' % finallist[i]  + "\", ";
-	
-	wllist = len(wordlisted);
-	if wllist > 2:
-		wordlisted = wordlisted[0:wllist - 2];
-		countlisted = countlisted[0:len(countlisted) - 2];		
-	wordlisted += "]";
-	
-	## Write to the javascript file
-	countstart = htmlpage.find('{{{WORDS}}}');
-	wordstart = htmlpage.find('{{{COUNTS}}}');
-	
-	htmlpage2 = htmlpage[0:wordstart] + countlisted + htmlpage[wordstart + 12:countstart] + wordlisted + htmlpage[countstart + 11:len(htmlpage)];
-	f.close();
-	
-	fname = 'd3-cloud/examples/' + str(datetime.date) + str(datetime.time) + '.html';
-	f = open(fname,'w');
-
-	f.truncate();
-	f.write(htmlpage2);
-	f.close();
+# 	differences = sorted(differences);
+# 	freqs = sorted(freqs);
+# 	
+# 	sortedd = [];
+# 	for w in sorted(finallist, key=finallist.get, reverse=True):
+# 		sortedd.append({w : finallist[w]});

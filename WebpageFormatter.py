@@ -3,24 +3,37 @@
 # Returns a formatted webpage containing the information
 
 def getFormattedWebpage(input1, input2):
-	fileHandle = open('html/template.html','r');
-	str1 = fileHandle.read();
-	fileHandle.close();
+	return unicode(input1) + unicode(input2);
+
+def arrayToTable(input):
+	rv = "<table>";
+	for i in input:
+		rv = rv + "<tr><td>"+i+"</td></tr>";
+	return rv;
 	
-	status1index = str1.find("{{{statuses 1}}}", 0, len(str1));
-	status2index = str1.find("{{{statuses 2}}}", 0, len(str1));
+def getWordCloud(input, tagName):
+	## Turn the text into a javascript file
+	f = open('html/d3-cloud/examples/simple.html','rw');
+	htmlpage = unicode(f.read());
 	
-	webpagestart1 = str1;
-	webpageend1 = "";
+	wordlisted = "[";
+	countlisted = "";
+	for i in input:
+		wordlisted = wordlisted + "\"" + i + "\", ";
+		countlisted = countlisted + "\"" + '%.5f' % input[i]  + "\", ";
 	
-	if status1index != -1:
-		webpagestart1 = str1[0:status1index];
-		webpageend1 = str1[status1index:status2index];
-		
-	webpageend2 = "";
+	wllist = len(wordlisted);
+	if wllist > 2:
+		wordlisted = wordlisted[0:wllist - 2];
+		countlisted = countlisted[0:len(countlisted) - 2];		
+	wordlisted += "]";
 	
-	if status2index != -1:
-		webpageend2 = str1[status2index:len(str1)];
+	## Write to the javascript file
+	countstart = htmlpage.find('{{{WORDS}}}');
+	tagstart = htmlpage.find('{{{TAG}}}');
+	wordstart = htmlpage.find('{{{COUNTS}}}');
 	
-	webpage = webpagestart1 + input1 + webpageend1 + input2 + webpageend2;
-	return webpage;
+	htmlpage2 = htmlpage[0:wordstart] + countlisted + htmlpage[wordstart + 12:countstart] + wordlisted + htmlpage[countstart + 11: tagstart] +"\"" +tagName+ "\"" + htmlpage[tagstart + 9:len(htmlpage)];
+	f.close();
+	
+	return htmlpage2;

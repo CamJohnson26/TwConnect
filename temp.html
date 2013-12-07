@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="html/css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="html/template.css">
+		<title>TwConnect</title>
+
+		<script src="https://code.jquery.com/jquery.js"></script>
+		<script src="html/styling.js"></script>
+		<script src="html/js/bootstrap.min.js"></script>
+		<script src="html/d3-cloud/lib/d3/d3.js"></script>
+		<script src="html/d3-cloud/d3.layout.cloud.js"></script>
+		<script src="html/venn.js"></script>
+		<script>
+			function reloadWebpage()
+			{
+				xmlhttp=new XMLHttpRequest();
+				
+ 				xmlhttp.onreadystatechange=function() {
+ 					if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+ 						document.getElementById("tablediv").innerHTML=parseScript(xmlhttp.responseText);
+ 					}
+ 				}
+				xmlhttp.open("POST","/userinput",true);
+				xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+				
+				var name1 = document.getElementById('user1twittername').value;
+				var name2 = document.getElementById('user2twittername').value;
+				var datatosend = "user1twittername=" + name1 + "&user2twittername=" + name2;
+				xmlhttp.send(datatosend);
+			}
+			
+			function parseScript(_source) {
+				var source = _source;
+				var scripts = new Array();
+			
+				// Strip out tags
+				while(source.indexOf("<script") > -1 || source.indexOf("</script") > -1) {
+					var s = source.indexOf("<script");
+					var s_e = source.indexOf(">", s);
+					var e = source.indexOf("</script", s);
+					var e_e = source.indexOf(">", e);
+			
+					// Add to scripts array
+					scripts.push(source.substring(s_e+1, e));
+					// Strip from source
+					source = source.substring(0, s) + source.substring(e_e+1);
+				}
+			
+				// Loop through every script collected and eval it
+				for(var i=0; i<scripts.length; i++) {
+					try {
+						eval(scripts[i]);
+					}
+					catch(ex) {
+						// do what you want here when a script fails
+					}
+				}
+			
+				// Return the cleaned source
+				return source;
+			}
+		</script>
+	</head>
+	
+	<body>
+		<div id="pageouter">
+		
+			<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">TwConnect</a>
+				</div>
+			</nav>
+
+			<div id="intro">
+				<div id="heading">
+					<h1>TwConnect</h1>
+					<h6 >This is the introduction of our website...</h6>
+				</div>
+				<div id="2users">
+					<form class="form-inline" role="form">
+						<span class="glyphicon glyphicon-user"></span>
+						<div class="form-group">
+							<label class="sr-only">@twitter_handle</label>
+							<input id="user1twittername" type="text" class="form-control" placeholder="@twitter_handle"/>
+						</div>
+						<span class="glyphicon glyphicon-user"></span>
+						<div class="form-group">
+							<label class="sr-only">@twitter_handle</label>
+							<input id="user2twittername" type="text" class="form-control" placeholder="@twitter_handle"/>
+						</div>
+						<button type="button" class="btn btn-default" onclick="reloadWebpage()">Compare</button>
+					</form>
+				</div>
+			</div>
+
+			<div id="comparison">
+				<wordcloud></wordcloud>
+				<venn></venn>
+				<div id="tablediv"><script>
+  var fill = d3.scale.category20();
+	 var counts=new Array("0.00733", "0.00756", "0.00729", "0.00722", "0.00659", "0.00675", "0.00709", "0.00751");
+
+	var largest = 0;
+	for(var i = 0; i < counts.length; i++) {
+		if (parseFloat(counts[i]) > largest) {
+			largest = parseFloat(counts[i]);
+		}
+	}
+	
+	if (largest == 0) {
+		largest = 1;
+	}
+	alert(largest);
+
+	
+  d3.layout.cloud().size([400, 400])
+      .words(["IT.", "TONIGHT", "SEASON", "JUMP", "START", "DAMN", "ITS", "BEST"].map(function(d, i) {
+        return {text: d, size: (16 * (parseFloat(counts[i]) / largest) + 16)};
+      }))
+      .padding(5)
+      .rotate(function() { return ~~(Math.random() * 2) * 90; })
+      .font("Impact")
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw)
+      .start();
+      alert("hello3????");
+
+  function draw(words) {
+    alert("hello3????");
+  	document.getElementsByTagName("wordcloud")[0].innerHTML="";
+    d3.select("wordcloud").append("svg")
+        .attr("width", 400)
+        .attr("height", 400)
+      .append("g")
+        .attr("transform", "translate(150,150)")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
+  }
+</script>
+<span>helloworld</span></div>
+			</div>
+			
+		</div>
+	</body>
+</html>
